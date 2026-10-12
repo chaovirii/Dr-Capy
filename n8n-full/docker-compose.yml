@@ -1,0 +1,50 @@
+name: n8n-full
+services:
+  n8n:
+    image: docker.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://desktop-5rvmf83.tailc87985.ts.net/
+      - N8N_EDITOR_BASE_URL=https://desktop-5rvmf83.tailc87985.ts.net/
+      - TZ=Asia/Jakarta
+      - GENERIC_TIMEZONE=Asia/Jakarta
+
+      # Workflow & System Execution
+      - N8N_EXECUTE_COMMAND_ENABLED=true
+      - NODES_EXCLUDE=[]
+      - N8N_RESTRICT_FILE_ACCESS_TO=/data/workspace
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+      - N8N_DIAGNOSTICS_ENABLED=false
+
+      # API & Data Limits
+      - N8N_PAYLOAD_SIZE_MAX=16
+      - N8N_NODE_DEFAULT_EXECUTION_TIMEOUT=300
+
+      # File access: the Read/Write Files node may only use the dedicated workspace folder
+      - N8N_RESTRICT_FILE_ACCESS_TO=/home/node/workspace
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Dedicated n8n workspace: D:\Files\Local n8n Workspace  <->  /home/node/workspace
+      - type: bind
+        source: D:/Files/Local n8n Workspace
+        target: /home/node/workspace
+
+  searxng:
+    image: ghcr.io/searxng/searxng:latest
+    container_name: searxng
+    restart: always
+    environment:
+      - SEARXNG_BASE_URL=http://searxng:8080/
+    volumes:
+      - ./searxng:/etc/searxng
+    ports:
+      - "8080:8080"
+
+volumes:
+  n8n_data:

@@ -1,0 +1,9 @@
+use_default_settings: true
+server:
+  secret_key: "change_this_to_any_random_string"
+search:
+  safe_search: 0
+  autocomplete: ""
+  formats:
+    - html
+    - json
